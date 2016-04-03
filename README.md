@@ -1,0 +1,2 @@
+# gradle
+a gradle template
