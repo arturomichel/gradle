@@ -2,13 +2,22 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'scala'
 apply plugin: 'spring-boot'
+apply plugin: 'application'
 
 repositories {
        mavenCentral()
+       jcenter()
+       maven { url 'http://repo1.maven.org/maven2' }
 }
 
 group 'j29'
 version '1.0-SNAPSHOT'
+
+configurations {
+    releaseJars
+}
+
+mainClassName = "com.j29.Main"
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4',
@@ -22,13 +31,14 @@ dependencies {
             'org.codehaus.groovy:groovy-all:2.4',
             'org.spockframework:spock-core:1.0-groovy-2.4'
 		
+    releaseJars 'junit:junit:4.12'
 }
 
 sourceSets {
     main {
         java { srcDirs = [] }    // no source dirs for the java compiler
-        groovy { srcDirs = ["src/main/groovy", "src/main/java"] }  // compile everything in src/ with groovy
-	scala { srcDirs = ["src/main/scala"] }
+        groovy { srcDirs += ["src/main/groovy", "src/main/java"] }  // compile everything in src/ with groovy
+	scala { srcDirs += ["src/main/scala"] }
     }
 }
 
@@ -39,4 +49,6 @@ jar {
         attributes 'Implementation-Title': 'Gradle Quickstart',
                    'Implementation-Version': version
     }
+    
+    from configurations.releaseJars.collect { it.isDirectory() ? it : zipTree(it) }
 }
